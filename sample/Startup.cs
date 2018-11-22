@@ -19,7 +19,7 @@ namespace Sample
                 options.Profiles["default"] = new OutputCacheProfile
                 {
                     Duration = 600,
-                    FileDependencies= new []{ ""}
+                    FileDependencies= new []{ "" }
                 };
             });
 

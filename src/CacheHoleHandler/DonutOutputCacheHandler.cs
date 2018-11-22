@@ -97,7 +97,7 @@ namespace Microsoft.AspNetCore.Mvc
     /// <returns></returns>
     private byte[] StringToByteArray(string input)
     {
-      return Encoding.ASCII.GetBytes(input);
+      return Encoding.UTF8.GetBytes(input);
     }
 
   }
