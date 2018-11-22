@@ -8,16 +8,16 @@
     <Authors>Mads Kristensen</Authors>
     <Description>ASP.NET Core middleware providing pure server-side output caching through a simple-to-use API</Description>
     <Copyright>Copyright © Mads Kristensen</Copyright>
-    <PackageId>WebEssentials.AspNetCore.OutputCaching</PackageId>
-    <Product>WebEssentials.AspNetCore.OutputCaching</Product>
-    <PackageIconUrl>https://raw.githubusercontent.com/madskristensen/WebEssentials.AspNetCore.OutputCaching/master/art/logo.png</PackageIconUrl>
+    <PackageId>DonutOutputCachingCore</PackageId>
+    <Product>DonutOutputCachingCore</Product>
+    <PackageIconUrl>https://raw.githubusercontent.com/madskristensen/WebEssentials.AspNetCore.OutputCaching/master/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/madskristensen/WebEssentials.AspNetCore.OutputCaching</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/madskristensen/WebEssentials.AspNetCore.OutputCaching/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/madskristensen/WebEssentials.AspNetCore.OutputCaching</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\WebEssentials.AspNetCore.OutputCaching.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\DonutOutputCachingCore.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
