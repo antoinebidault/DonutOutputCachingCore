@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ASP.NET Core output caching middleware
 
 
@@ -82,3 +83,7 @@ public IActionResult Index()
     return View();
 }
 ```
+=======
+# DonutOutputCachingCore
+Donut output caching for ASP.NET Core
+>>>>>>> ea52ae81a948fa4ba88d1d7a2466da1b82e82eba
