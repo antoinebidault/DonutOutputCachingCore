@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,7 +7,7 @@
     <Version>1.0.0</Version>
     <Authors>Antoine BIDAULT</Authors>
     <Description>ASP.NET Core middleware providing pure server-side output caching through a simple-to-use API</Description>
-    <Copyright>Copyright © DonutOutputCachingCore/Copyright>
+    <Copyright>Copyright © DonutOutputCachingCore </Copyright>
     <PackageId>DonutOutputCachingCore</PackageId>
     <Product>DonutOutputCachingCore</Product>
     <PackageIconUrl>https://raw.githubusercontent.com/antoinebidault/DonutOutputCachingCore/master/logo.png</PackageIconUrl>
