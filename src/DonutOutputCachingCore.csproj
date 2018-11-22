@@ -5,15 +5,15 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageTags>asp.net, performance, speed, cache, caching</PackageTags>
     <Version>1.0.0</Version>
-    <Authors>Mads Kristensen</Authors>
+    <Authors>Antoine BIDAULT</Authors>
     <Description>ASP.NET Core middleware providing pure server-side output caching through a simple-to-use API</Description>
-    <Copyright>Copyright © Mads Kristensen</Copyright>
+    <Copyright>Copyright © DonutOutputCachingCore </Copyright>
     <PackageId>DonutOutputCachingCore</PackageId>
     <Product>DonutOutputCachingCore</Product>
     <PackageIconUrl>https://raw.githubusercontent.com/madskristensen/WebEssentials.AspNetCore.OutputCaching/master/logo.png</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/madskristensen/WebEssentials.AspNetCore.OutputCaching</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/madskristensen/WebEssentials.AspNetCore.OutputCaching/blob/master/LICENSE</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/madskristensen/WebEssentials.AspNetCore.OutputCaching</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/antoinebidault/DonutOutputCachingCore</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/antoinebidault/DonutOutputCachingCore/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/antoinebidault/DonutOutputCachingCore</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup>

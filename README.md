@@ -1,5 +1,9 @@
 # ASP.NET Core donut output caching middleware
 
+[![Build status](https://ci.appveyor.com/api/projects/status/ojf242hckvt0cm8n?svg=true)](https://ci.appveyor.com/project/antoinebidault/donutoutputcachingcore)
+[![NuGet](https://img.shields.io/nuget/v/donutoutputcachingcore.svg)](https://www.nuget.org/packages/DonutOutputCachingCore/)
+
+
 Donut server-side caching middleware for ASP.NET 2.0. 
 With this extension, you'll be able to pull outside the cache any component. This is very useful when you have personnalized content like user profile top nan...
 This is a classic ASP.NET CORE 2.0 will put the html output in cache.
