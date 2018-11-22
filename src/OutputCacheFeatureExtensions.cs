@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 
-namespace WebEssentials.AspNetCore.OutputCaching
+namespace DonutOutputCachingCore
 {
     /// <summary>
     /// Extensions methods for HttpContext

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
@@ -9,18 +10,20 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebEssentials.AspNetCore.OutputCaching
+namespace DonutOutputCachingCore
 {
-    internal class OutputCacheMiddleware
+    internal class DonutOutputCacheMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly IOutputCachingService _cache;
         private readonly OutputCacheOptions _options;
+        private readonly DonutOutputCacheHandler _donutCacheHandler;
 
-        public OutputCacheMiddleware(RequestDelegate next, IOutputCachingService cache, OutputCacheOptions options)
+        public DonutOutputCacheMiddleware(RequestDelegate next, IOutputCachingService cache, OutputCacheOptions options, DonutOutputCacheHandler donutCacheHandler)
         {
             _next = next;
             _cache = cache;
+            _donutCacheHandler = donutCacheHandler;
             _options = options;
         }
 
@@ -32,6 +35,7 @@ namespace WebEssentials.AspNetCore.OutputCaching
             }
             else if (_cache.TryGetValue(context.Request.Host + context.Request.Path, out OutputCacheResponseEntry entry) && entry.IsCached(context, out OutputCacheResponse item))
             {
+                item.Body = await _donutCacheHandler.ParseAndExecuteChildRequestAsync(context,item.Body);
                 await ServeFromCacheAsync(context, item);
             }
             else
@@ -77,6 +81,7 @@ namespace WebEssentials.AspNetCore.OutputCaching
 
         private static async Task ServeFromCacheAsync(HttpContext context, OutputCacheResponse value)
         {
+            /*
             // Copy over the HTTP headers
             foreach (string name in value.Headers.Keys)
             {
@@ -89,13 +94,14 @@ namespace WebEssentials.AspNetCore.OutputCaching
             // Serve a conditional GET request when if-none-match header exist
             if (context.Request.Headers.TryGetValue(HeaderNames.IfNoneMatch, out StringValues etag) && context.Response.Headers[HeaderNames.ETag] == etag)
             {
+                await context.Response.Body.WriteAsync(value.Body, 0, value.Body.Length);
                 context.Response.ContentLength = 0;
                 context.Response.StatusCode = StatusCodes.Status304NotModified;
             }
             else
-            {
+            {*/
                 await context.Response.Body.WriteAsync(value.Body, 0, value.Body.Length);
-            }
+         //   }
         }
 
         private void AddResponseToCache(HttpContext context, OutputCacheResponseEntry entry, byte[] bytes)

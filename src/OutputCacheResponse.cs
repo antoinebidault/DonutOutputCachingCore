@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
-namespace WebEssentials.AspNetCore.OutputCaching
+namespace DonutOutputCachingCore
 {
     /// <summary>
     /// A version of the route in memory

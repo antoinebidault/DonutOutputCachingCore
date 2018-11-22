@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace WebEssentials.AspNetCore.OutputCaching
+namespace DonutOutputCachingCore
 {
     internal class OutputCachingService : IOutputCachingService
     {

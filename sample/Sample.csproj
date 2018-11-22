@@ -6,13 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.4" />
     <PackageReference Include="WebMarkupMin.AspNetCore2">
       <Version>2.4.2</Version>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\WebEssentials.AspNetCore.OutputCaching.csproj" />
+    <ProjectReference Include="..\src\DonutOutputCachingCore.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System;
-using WebEssentials.AspNetCore.OutputCaching;
+using DonutOutputCachingCore;
 using Microsoft.Net.Http.Headers;
 
 namespace Sample.Controllers
 {
     public class HomeController : Controller
     {
-        [OutputCache(Duration = 600)]
+        [DonutOutputCache(Duration = 600)]
         public IActionResult Index()
         {
             return View("Index");
@@ -20,13 +20,13 @@ namespace Sample.Controllers
             return View("Index");
         }
 
-        [OutputCache(Duration = 600, VaryByParam = "foo")]
+        [DonutOutputCache(Duration = 600, VaryByParam = "foo")]
         public IActionResult Query()
         {
             return View("Index");
         }
 
-        [OutputCache(Profile = "default")]
+        [DonutOutputCache(Profile = "default")]
         public IActionResult Profile()
         {
             return View("Index");

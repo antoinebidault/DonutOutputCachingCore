@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using System;
-using WebEssentials.AspNetCore.OutputCaching;
+using DonutOutputCachingCore;
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -13,9 +13,9 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Registers the output caching middleware
         /// </summary>
-        public static void UseOutputCaching(this IApplicationBuilder app)
+        public static void UseDonutOutputCaching(this IApplicationBuilder app)
         {
-            app.UseMiddleware<OutputCacheMiddleware>();
+            app.UseMiddleware<DonutOutputCacheMiddleware>();
         }
     }
 }

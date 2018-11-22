@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using WebEssentials.AspNetCore.OutputCaching;
+using DonutOutputCachingCore;
 using WebMarkupMin.AspNetCore2;
 
 namespace Sample
@@ -14,7 +14,7 @@ namespace Sample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddOutputCaching(options =>
+            services.AddDonutOutputCaching(options =>
             {
                 options.Profiles["default"] = new OutputCacheProfile
                 {
@@ -39,7 +39,7 @@ namespace Sample
             app.UseBrowserLink();
             app.UseDeveloperExceptionPage();
 
-            app.UseOutputCaching();
+            app.UseDonutOutputCaching();
             app.UseWebMarkupMin();
             app.UseMvc(routes =>
             {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace WebEssentials.AspNetCore.OutputCaching
+namespace DonutOutputCachingCore
 {
     /// <summary>
     /// An interface for the output caching service.

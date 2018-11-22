@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace WebEssentials.AspNetCore.OutputCaching
+namespace DonutOutputCachingCore
 {
     /// <summary>
     /// The cached entry

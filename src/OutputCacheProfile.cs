@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Net.Http.Headers;
 
-namespace WebEssentials.AspNetCore.OutputCaching
+namespace DonutOutputCachingCore
 {
     /// <summary>
     /// A cache profile.
     /// </summary>
     public class OutputCacheProfile
     {
+
         /// <summary>
         /// The duration in seconds of how long to cache the response.
         /// </summary>

@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
-using WebEssentials.AspNetCore.OutputCaching;
+using DonutOutputCachingCore;
 
 namespace Microsoft.AspNetCore.Mvc
 {
     /// <summary>
     /// Enables server-side output caching.
     /// </summary>
-    public class OutputCacheAttribute : ActionFilterAttribute
+    public class DonutOutputCacheAttribute : ActionFilterAttribute
     {
         private string[] _fileDependencies;
 
@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// Enables server-side output caching.
         /// </summary>
         /// <param name="fileDependencies">Globbing patterns relative to the content root (not the wwwroot).</param>
-        public OutputCacheAttribute(params string[] fileDependencies)
+        public DonutOutputCacheAttribute(params string[] fileDependencies)
         {
             _fileDependencies = fileDependencies;
 

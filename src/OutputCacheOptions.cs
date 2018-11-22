@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
-namespace WebEssentials.AspNetCore.OutputCaching
+namespace DonutOutputCachingCore
 {
     /// <summary>
     /// Options for the output caching service.
@@ -36,7 +36,7 @@ namespace WebEssentials.AspNetCore.OutputCaching
         public static Func<HttpContext, bool> DefaultRequestQualifier = (context) =>
         {
             if (context.Request.Method != HttpMethods.Get) return false;
-            if (context.User.Identity.IsAuthenticated) return false;
+           // if (context.User.Identity.IsAuthenticated) return false;
 
             return true;
         };
