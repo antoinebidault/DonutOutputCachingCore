@@ -1,8 +1,9 @@
-<<<<<<< HEAD
-# ASP.NET Core output caching middleware
+# ASP.NET Core donut output caching middleware
 
-
-Server-side caching middleware for ASP.NET 2.0
+Donut server-side caching middleware for ASP.NET 2.0. 
+With this extension, you'll be able to pull outside the cache any component. This is very useful when you have personnalized content like user profile top nan...
+This is a classic ASP.NET CORE 2.0 will put the html output in cache.
+This library is based on the great MadKristensen's WebEssentials.AspNetCore.OutputCaching library : https://github.com/madskristensen/WebEssentials.AspNetCore.OutputCaching. 
 
 ## Register the middleware
 
@@ -12,7 +13,7 @@ Start by registering the service it in `Startup.cs` like so:
 public void ConfigureServices(IServiceCollection services)
 {
     services.AddMvc();
-    services.AddOutputCaching();
+    services.AddDonutOutputCaching();
 }
 ```
 
@@ -21,7 +22,7 @@ public void ConfigureServices(IServiceCollection services)
 ```c#
 public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 {
-    app.UseOutputCaching();
+    app.UseDonutOutputCaching();
     app.UseMvc(routes =>
     {
         routes.MapRoute(
@@ -34,11 +35,19 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 ## Usage examples
 There are various ways to use and customize the output caching. Here are some examples.
 
+### Component invocation
+Use the classic `Component.InvokeAsync` attribute in a view.
+The boolean param excludeFromCache will specify that this component must be refreshed on each page view.
+
+```c#
+@await Component.InvokeAsync("MyComponent", excludeFromCache: true)
+```
+
 ### Action filter
 Use the `OutputCache` attribute on a controller action:
 
 ```c#
-[OutputCache(Duration = 600, VaryByParam = "id")]
+[DonutOutputCache(Duration = 600, VaryByParam = "id")]
 public IActionResult Product()
 {
     return View();
@@ -64,7 +73,7 @@ Set up cache profiles to reuse the same settings.
 public void ConfigureServices(IServiceCollection services)
 {
     services.AddMvc();
-    services.AddOutputCaching(options =>
+    services.AddDonutOutputCaching(options =>
     {
         options.Profiles["default"] = new OutputCacheProfile
         {
@@ -77,13 +86,9 @@ public void ConfigureServices(IServiceCollection services)
 Then use the profile from an action filter:
 
 ```c#
-[OutputCache(Profile = "default")]
+[DonutOutputCache(Profile = "default")]
 public IActionResult Index()
 {
     return View();
 }
 ```
-=======
-# DonutOutputCachingCore
-Donut output caching for ASP.NET Core
->>>>>>> ea52ae81a948fa4ba88d1d7a2466da1b82e82eba

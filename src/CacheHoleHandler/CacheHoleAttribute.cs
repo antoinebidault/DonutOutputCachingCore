@@ -14,6 +14,12 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
     /// </summary>
     public static class ViewComponentHelperExtensions
     {
+
+        public static Task<IHtmlContent> InvokeAsync(this IViewComponentHelper helper, string name, bool excludeFromCache = false)
+        {
+            return helper.InvokeAsync(name, null, excludeFromCache);
+        }
+
         /// <summary>
         /// Invokes a view component with the specified <paramref name="name"/>.
         /// </summary>
@@ -21,7 +27,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         /// <param name="name">The name of the view component.</param>
         /// <returns>A <see cref="Task"/> that on completion returns the rendered <see cref="IHtmlContent" />.
         /// </returns>
-        public static Task<IHtmlContent> InvokeAsync(this IViewComponentHelper helper, string name, object arguments = null, bool cacheHole = false)
+        public static Task<IHtmlContent> InvokeAsync(this IViewComponentHelper helper, string name, object arguments = null, bool excludeFromCache = false)
         {
             if (helper == null)
             {
@@ -29,9 +35,9 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             }
 
 
-            if (cacheHole)
+            if (excludeFromCache)
             {
-                var outputCache = helper.InvokeAsync(name, arguments: arguments, cacheHole: false).Result.GetString();
+                var outputCache = helper.InvokeAsync(name, arguments: arguments, excludeFromCache: false).Result.GetString();
                 var jsonStrAttribute = arguments != null ? JsonConvert.SerializeObject(arguments) : string.Empty;
                 var result = $"<donutoutputcache class=\"StartDonutOutputCaching\" data-name=\"{name}\" data-args=\"{jsonStrAttribute}\">{outputCache}</donutoutputcache>";
                 return Task.FromResult(new HtmlString(result) as IHtmlContent);
