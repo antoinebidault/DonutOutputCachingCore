@@ -19,8 +19,6 @@ namespace Microsoft.Extensions.DependencyInjection
       var options = new OutputCacheOptions();
 
       services.AddSingleton(options);
-      //   services.AddTransient<IViewBufferScope, MemoryPoolViewBufferScope>();
-      //services.AddTransient<IViewComponentHelper, DefaultViewComponentHelper>();
       services.AddSingleton<ViewComponentHelperFactory>();
       services.AddSingleton<DonutOutputCacheHandler>();
       services.AddSingleton<IOutputCachingService, OutputCachingService>();

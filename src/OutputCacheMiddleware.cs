@@ -33,8 +33,8 @@ namespace DonutOutputCachingCore
       }
       else if (_cache.TryGetValue(context.Request.Host + context.Request.Path, out OutputCacheResponseEntry entry) && entry.IsCached(context, out OutputCacheResponse item))
       {
-
-        item.Body = await _donutCacheHandler.ParseAndExecuteChildRequestAsync(context, item.Body);
+        // Execution of the childs ViewComponents
+        item.Body = await _donutCacheHandler.ParseAndExecuteViewComponentsAsync(context, item.Body);
         await ServeFromCacheAsync(context, item);
       }
       else
@@ -64,11 +64,16 @@ namespace DonutOutputCachingCore
             AddResponseToCache(context, entry, bytes);
           }
 
-          var responseWithoutDonutTags = await _donutCacheHandler.ParseAndRemoveTheOutputCacheTags(ms.ToArray());
-          using (var tempStream = new MemoryStream(responseWithoutDonutTags))
+          // H
+          if (ms.Length > 0)
           {
-            tempStream.Seek(0, SeekOrigin.Begin);
-            await tempStream.CopyToAsync(originalStream);
+            var responseWithoutDonutTags = await _donutCacheHandler.RemoveDonutHtmlTags(ms.ToArray());
+            response.Headers.ContentLength = responseWithoutDonutTags.Length;
+            using (var tempStream = new MemoryStream(responseWithoutDonutTags))
+            {
+              tempStream.Seek(0, SeekOrigin.Begin);
+              tempStream.CopyTo(originalStream);
+            }
           }
         }
       }
@@ -90,7 +95,7 @@ namespace DonutOutputCachingCore
         }
       }
 
-      var body = await _donutCacheHandler.ParseAndRemoveTheOutputCacheTags(value.Body);
+      var body = await _donutCacheHandler.RemoveDonutHtmlTags(value.Body);
       context.Response.ContentLength = body.Length;
       await context.Response.Body.WriteAsync(body, 0, body.Length);
     }

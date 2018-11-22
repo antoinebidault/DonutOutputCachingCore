@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.Mvc
       return _factory.Create(context);
     }
 
-    internal async Task<byte[]> ParseAndRemoveTheOutputCacheTags( byte[] htmlBytes)
+    internal async Task<byte[]> RemoveDonutHtmlTags( byte[] htmlBytes)
     {
       string htmlString = System.Text.Encoding.UTF8.GetString(htmlBytes);
       HtmlDocument htmlDoc = LoadDocument(htmlString);
@@ -39,8 +39,16 @@ namespace Microsoft.AspNetCore.Mvc
     }
 
 
-
-    internal async Task<byte[]> ParseAndExecuteChildRequestAsync(HttpContext context, byte[] htmlBytes)
+    /// <summary>
+    /// This methods will take all the <donutoutputcache data-name="test" data-args="{test:'test'}"></donutoutputcache> html tags
+    /// Take his data-args and data-name attributes, execute the rendering of each viewComponent and replace the content of the tag with the html output of each component. 
+    /// This parts requires probably a bit of memory optimization.
+    /// This will not remove the donutoutputcache tag.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="htmlBytes">The body response bytes</param>
+    /// <returns></returns>
+    internal async Task<byte[]> ParseAndExecuteViewComponentsAsync(HttpContext context, byte[] htmlBytes)
     {
       object argsObject;
       string htmlString = System.Text.Encoding.UTF8.GetString(htmlBytes);
@@ -58,7 +66,6 @@ namespace Microsoft.AspNetCore.Mvc
         var name = node.Attributes["data-name"].Value;
         var args = node.Attributes["data-args"]?.Value;
         argsObject = args != null ? JsonConvert.DeserializeObject(args) : null;
-
         var result = await helper.InvokeAsync(name, arguments: argsObject);
 
         htmlString = htmlString.Replace(node.InnerHtml, result?.GetString());
@@ -69,6 +76,12 @@ namespace Microsoft.AspNetCore.Mvc
 
     }
 
+
+    /// <summary>
+    /// Load the html document
+    /// </summary>
+    /// <param name="htmlString"></param>
+    /// <returns></returns>
     private static HtmlDocument LoadDocument(string htmlString)
     {
       HtmlDocument htmlDoc;
@@ -77,6 +90,11 @@ namespace Microsoft.AspNetCore.Mvc
       return htmlDoc;
     }
 
+    /// <summary>
+    /// Convert string to bytes[]
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
     private byte[] StringToByteArray(string input)
     {
       return Encoding.ASCII.GetBytes(input);
