@@ -43,32 +43,30 @@ namespace Microsoft.AspNetCore.Mvc
     /// This methods will take all the <donutoutputcache data-name="test" data-args="{test:'test'}"></donutoutputcache> html tags
     /// Take his data-args and data-name attributes, execute the rendering of each viewComponent and replace the content of the tag with the html output of each component. 
     /// This parts requires probably a bit of memory optimization.
-    /// This will not remove the donutoutputcache tag.
+    /// This will not remove the donutoutputcache html tags. Because they need to be kept in the cache for the next page refresh
     /// </summary>
     /// <param name="context"></param>
     /// <param name="htmlBytes">The body response bytes</param>
     /// <returns></returns>
     internal async Task<byte[]> ParseAndExecuteViewComponentsAsync(HttpContext context, byte[] htmlBytes)
     {
-      object argsObject;
       string htmlString = System.Text.Encoding.UTF8.GetString(htmlBytes);
       HtmlDocument htmlDoc = LoadDocument(htmlString);
-      var nodes = htmlDoc.DocumentNode.SelectNodes("descendant::donutoutputcache");
+      HtmlNodeCollection componentNodes = htmlDoc.DocumentNode.SelectNodes("descendant::donutoutputcache");
 
-      if (nodes == null || nodes.Count == 0)
+      if (componentNodes == null || componentNodes.Count == 0)
         return htmlBytes;
 
-      var donutHoles = new List<DonutHoleComponent>();
       var helper = GetViewComponentHelper(context);
-
-      foreach (HtmlNode node in nodes)
+      
+      foreach (HtmlNode node in componentNodes)
       {
-        var name = node.Attributes["data-name"].Value;
-        var args = node.Attributes["data-args"]?.Value;
-        argsObject = args != null ? JsonConvert.DeserializeObject(args) : null;
-        var result = await helper.InvokeAsync(name, arguments: argsObject);
+        string name = node.Attributes["data-name"].Value;
+        string args = node.Attributes["data-args"]?.Value;
+        object argsObject = args != null ? JsonConvert.DeserializeObject(args) : null;
+        Html.IHtmlContent componentHtml = await helper.InvokeAsync(name, arguments: argsObject);
 
-        htmlString = htmlString.Replace(node.InnerHtml, result?.GetString());
+        htmlString = htmlString.Replace(node.InnerHtml, componentHtml?.GetString());
       }
 
 

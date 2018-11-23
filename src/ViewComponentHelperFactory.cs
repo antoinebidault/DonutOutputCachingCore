@@ -15,6 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DonutOutputCachingCore.CacheHoleAttribute
 {
+  /// <summary>
+  /// This factory will instantiate a IViewComponentHelper based on httpContext with a fake ViewContext
+  /// </summary>
     public class ViewComponentHelperFactory
     {
         public ViewComponentHelperFactory()

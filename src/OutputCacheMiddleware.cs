@@ -63,8 +63,7 @@ namespace DonutOutputCachingCore
             AddEtagToResponse(context, bytes);
             AddResponseToCache(context, entry, bytes);
           }
-
-          // H
+          
           if (ms.Length > 0)
           {
             var responseWithoutDonutTags = await _donutCacheHandler.RemoveDonutHtmlTags(ms.ToArray());
