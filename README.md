@@ -5,7 +5,7 @@
 
 Donut server-side caching middleware for ASP.NET Core 2.0.
 With this package, you'll be able to pull outside the outputCache any component. This child components would be executed on each request. This is particulary useful when you have personnalized content like user profile top nav, behavioral based contents...
-This library is based on the great MadKristensen's WebEssentials.AspNetCore.OutputCaching library : https://github.com/madskristensen/WebEssentials.AspNetCore.OutputCaching. 
+This library is based on the great MadKristensen's WebEssentials.AspNetCore.OutputCaching library : https://github.com/madskristensen/WebEssentials.AspNetCore.OutputCaching. Thanks to him !
 
 ## Register the middleware
 
