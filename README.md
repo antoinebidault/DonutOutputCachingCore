@@ -9,7 +9,7 @@ This library is based on the great MadKristensen's WebEssentials.AspNetCore.Outp
 
 ## The concept
 
-![DonutOutputCaching](>https://raw.githubusercontent.com/antoinebidault/DonutOutputCachingCore/master/images/concept.png)
+![DonutOutputCaching](https://raw.githubusercontent.com/antoinebidault/DonutOutputCachingCore/master/images/concept.png)
 
 
 ## Register the middleware
