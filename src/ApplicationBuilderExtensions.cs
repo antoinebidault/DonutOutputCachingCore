@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         public static void UseDonutOutputCaching(this IApplicationBuilder app)
         {
-            app.UseMiddleware<DonutOutputCacheMiddleware>();
+         //   app.UseMiddleware<DonutOutputCacheMiddleware>();
         }
     }
 }

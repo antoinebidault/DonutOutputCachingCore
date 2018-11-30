@@ -47,7 +47,7 @@ namespace DonutOutputCachingCore
         public static Func<HttpContext, bool> DefaultResponseQualifier = (context) =>
         {
             if (context.Response.StatusCode != StatusCodes.Status200OK) return false;
-            if (context.Response.Headers.ContainsKey(HeaderNames.SetCookie)) return false;
+           // if (context.Response.Headers.ContainsKey(HeaderNames.SetCookie)) return false;
 
             return true;
         };

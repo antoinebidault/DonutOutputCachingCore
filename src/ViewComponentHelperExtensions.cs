@@ -39,7 +39,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             {
                 var outputCache = helper.InvokeAsync(name, arguments: arguments, excludeFromCache: false).Result.GetString();
                 var jsonStrAttribute = arguments != null ? JsonConvert.SerializeObject(arguments) : string.Empty;
-                var result = $"<donutoutputcache class=\"StartDonutOutputCaching\" data-name=\"{name}\" data-args=\"{jsonStrAttribute}\">{outputCache}</donutoutputcache>";
+                var result = $"<donutoutputcache class=\"StartDonutOutputCaching\" data-name=\"{name}\" data-args='{jsonStrAttribute}'>{outputCache}</donutoutputcache>";
                 return Task.FromResult(new HtmlString(result) as IHtmlContent);
             }
             else

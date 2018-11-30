@@ -63,8 +63,8 @@ namespace Microsoft.AspNetCore.Mvc
       {
         string name = node.Attributes["data-name"].Value;
         string args = node.Attributes["data-args"]?.Value;
-        object argsObject = args != null ? JsonConvert.DeserializeObject(args) : null;
-        Html.IHtmlContent componentHtml = await helper.InvokeAsync(name, arguments: argsObject);
+        object argsObject = !string.IsNullOrEmpty(args) ? JsonConvert.DeserializeObject<Dictionary<string,object>>(args) : null;
+        Html.IHtmlContent componentHtml = await helper.InvokeAsync(name, argsObject);
 
         htmlString = htmlString.Replace(node.InnerHtml, componentHtml?.GetString());
       }

@@ -25,13 +25,6 @@ namespace DonutOutputCachingCore
       context.EnableOutputCaching(slidingExpiration, varyByHeader, varyByParam, useAbsoluteExpiration, fileDependencies);
     }
 
-    public static void InvalidateOutputCaching(this HttpContext context, string url)
-    {
-      OutputCacheProfile feature = context.Features.Get<OutputCacheProfile>();
-    }
-
-
-
     /// <summary>
     /// Enabled output caching of the response.
     /// </summary>

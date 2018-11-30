@@ -1,6 +1,7 @@
 ﻿using DonutOutputCachingCore;
 using DonutOutputCachingCore.CacheHoleAttribute;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 
@@ -19,8 +20,10 @@ namespace Microsoft.Extensions.DependencyInjection
       var options = new OutputCacheOptions();
 
       services.AddSingleton(options);
-      services.AddSingleton<ViewComponentHelperFactory>();
-      services.AddSingleton<DonutOutputCacheHandler>();
+      /*  services.AddScoped<ViewComponentHelperFactory>();
+       services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
+        services.AddScoped<DonutOutputCacheHandler>();*/
+      services.AddSingleton<OutputCacheHandler>();
       services.AddSingleton<IOutputCachingService, OutputCachingService>();
     }
 
@@ -32,9 +35,11 @@ namespace Microsoft.Extensions.DependencyInjection
       var options = new OutputCacheOptions();
       outputCacheOptions(options);
 
-      services.AddSingleton(options);
-      services.AddSingleton<ViewComponentHelperFactory>();
-      services.AddSingleton<DonutOutputCacheHandler>();
+      /* services.AddSingleton(options);
+        services.AddScoped<ViewComponentHelperFactory>();
+        services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
+        services.AddScoped<DonutOutputCacheHandler>();*/
+      services.AddSingleton<OutputCacheHandler>();
       services.TryAddSingleton<IOutputCachingService, OutputCachingService>();
     }
   }
