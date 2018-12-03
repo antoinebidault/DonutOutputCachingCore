@@ -61,18 +61,6 @@ public IActionResult Product()
 }
 ```
 
-### Programmatically
-
-Using the `EnableOutputCaching` extension method on the `HttpContext` object in MVC, WebAPI or Razor Pages:
-
-```c#
-public IActionResult About()
-{
-    HttpContext.EnableOutputCaching(TimeSpan.FromMinutes(1));
-    return View();
-}
-```
-
 ## Caching profiles
 Set up cache profiles to reuse the same settings.
 
