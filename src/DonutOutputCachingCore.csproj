@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageTags>asp.net, performance, speed, cache, caching</PackageTags>
     <Version>1.0.0</Version>
-    <Authors>Antoine BIDAULT, Mad Kristensen, EmKayDK</Authors>
+    <Authors>Antoine Bidault</Authors>
     <Description>ASP.NET Core middleware providing server-side donut output caching. You can put an entire action in the server-side cache while refreshing ViewComponents located in the page.</Description>
     <Copyright>Copyright © DonutOutputCachingCore </Copyright>
     <PackageId>DonutOutputCachingCore</PackageId>
