@@ -23,7 +23,7 @@ namespace Microsoft.AspNetCore.Mvc
 
       if (fileDependencies.Length == 0)
       {
-        _fileDependencies = new[] { "**/*.*" };
+        _fileDependencies = new[] { "**/*.cs", "**/*.cshtml" };
       }
     }
 
@@ -52,49 +52,57 @@ namespace Microsoft.AspNetCore.Mvc
     /// </summary>
     public bool UseAbsoluteExpiration { get; set; }
 
+    /// <summary>
+    /// Return the cache handler value
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
     private OutputCacheHandler GetCacheHandler(HttpContext context)
     {
-      return (OutputCacheHandler)context.RequestServices.GetService(typeof(OutputCacheHandler));
+      if (_cacheHandler == null)
+        _cacheHandler = (OutputCacheHandler)context.RequestServices.GetService(typeof(OutputCacheHandler));
+
+      return _cacheHandler;
     }
 
     /// <summary>
-    /// Executing the filter
+    /// Current cache entry
+    /// </summary>
+    private OutputCacheResponseEntry _entry { get; set; }
+
+
+    /// <summary>
+    /// Cache handler
+    /// </summary>
+    private OutputCacheHandler _cacheHandler { get; set; }
+
+
+    /// <summary>
+    /// Executing the filter 
+    /// This will return the cached result if it's in cache. 
+    /// I moved the cache handfling because viewcomponent requires a ControllerContext for a proper execution with RouteData... 
+    /// Unfortunatly, you're unable to cache the ActionContext from a middleware ...
     /// </summary>
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-      OutputCacheProfile profile = null;
-      if (!string.IsNullOrEmpty(Profile))
-      {
-        var options = (OutputCacheOptions)context.HttpContext.RequestServices.GetService(typeof(OutputCacheOptions));
-
-        if (options == null || !options.Profiles.ContainsKey(Profile))
-        {
-          throw new ArgumentException($"The Profile '{Profile}' hasn't been created.");
-        }
-
-        profile = options.Profiles[Profile]);
-
-      }
-      else
-      {
-        profile = new OutputCacheProfile()
-        {
-          Duration = Duration,
-          VaryByHeader = VaryByHeader,
-          VaryByParam = VaryByParam,
-          FileDependencies = _fileDependencies,
-          UseAbsoluteExpiration = UseAbsoluteExpiration
-        };
-      }
-
       var cacheHandler = GetCacheHandler(context.HttpContext);
 
-      
-
-      if (cacheHandler.IsInCache(context, profile))
+      // Set the current profile
+      cacheHandler.GetOrSetProfile(context, Profile, new OutputCacheProfile()
       {
-        //Create your result
-        filterContext.Result = new EmptyResult();
+        Duration = Duration,
+        VaryByHeader = VaryByHeader,
+        VaryByParam = VaryByParam,
+        FileDependencies = _fileDependencies,
+        UseAbsoluteExpiration = UseAbsoluteExpiration
+      });
+
+      var cache = (IOutputCachingService)context.HttpContext.RequestServices.GetService(typeof(IOutputCachingService));
+
+      OutputCacheResponseEntry entry;
+      if (cache.TryGetValue(context.HttpContext.Request.Host + context.HttpContext.Request.Path, out entry) && entry.IsCached(context.HttpContext, out OutputCacheResponse response))
+      {
+        context.Result = cacheHandler.Get(context, response).Result;
       }
       else
         base.OnActionExecuting(context);
@@ -102,15 +110,22 @@ namespace Microsoft.AspNetCore.Mvc
     }
 
 
-
+    /*
     /// <summary>
     /// Executing the filter
     /// </summary>
     public override void OnActionExecuted(ActionExecutedContext context)
     {
-      var cacheHandler = (OutputCacheHandler)context.HttpContext.RequestServices.GetService(typeof(OutputCacheHandler));
-      cacheHandler.Put(context.HttpContext);
+      var cacheHandler = GetCacheHandler(context.HttpContext);
+
+      if (_entry == null) { 
+        cacheHandler.Set(context, _entry);
+      }
+
+      // anyway remove the donutoutput cache tags in the response
+      cacheHandler.RemoveDonutOutputCacheTags(context.HttpContext);
+
       base.OnActionExecuted(context);
-    }
+    }*/
   }
 }

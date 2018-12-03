@@ -16,7 +16,7 @@ namespace Sample.Controllers
 
         public IActionResult Api()
         {
-            HttpContext.EnableOutputCaching(TimeSpan.FromMinutes(1));
+          //  HttpContext.EnableOutputCaching(TimeSpan.FromMinutes(1));
             return View("Index");
         }
 

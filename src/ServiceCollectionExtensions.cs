@@ -19,12 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
       var options = new OutputCacheOptions();
 
-      services.AddSingleton(options);
-      /*  services.AddScoped<ViewComponentHelperFactory>();
-       services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
-        services.AddScoped<DonutOutputCacheHandler>();*/
-      services.AddSingleton<OutputCacheHandler>();
-      services.AddSingleton<IOutputCachingService, OutputCachingService>();
+      BaseServiceRegistration(services, options);
     }
 
     /// <summary>
@@ -34,12 +29,19 @@ namespace Microsoft.Extensions.DependencyInjection
     {
       var options = new OutputCacheOptions();
       outputCacheOptions(options);
+      BaseServiceRegistration(services, options);
+    }
 
-      /* services.AddSingleton(options);
-        services.AddScoped<ViewComponentHelperFactory>();
-        services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
-        services.AddScoped<DonutOutputCacheHandler>();*/
-      services.AddSingleton<OutputCacheHandler>();
+    /// <summary>
+    /// Service registration basic
+    /// </summary>
+    /// <param name="services"></param>
+    private static void BaseServiceRegistration(IServiceCollection services, OutputCacheOptions options)
+    {
+      services.AddSingleton(options);
+      services.AddSingleton<ViewComponentHelperFactory>();
+      services.AddTransient<DonutOutputCacheHandler>();
+      services.AddTransient<OutputCacheHandler>();
       services.TryAddSingleton<IOutputCachingService, OutputCachingService>();
     }
   }

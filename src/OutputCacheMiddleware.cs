@@ -16,6 +16,7 @@ namespace DonutOutputCachingCore
     private readonly IOutputCachingService _cache;
     private readonly OutputCacheOptions _options;
     private readonly DonutOutputCacheHandler _donutCacheHandler;
+    private readonly OutputCacheHandler _cacheHandler;
 
     public DonutOutputCacheMiddleware(RequestDelegate next, IOutputCachingService cache, OutputCacheOptions options, DonutOutputCacheHandler donutCacheHandler)
     {
@@ -33,9 +34,10 @@ namespace DonutOutputCachingCore
       }
       else if (_cache.TryGetValue(context.Request.Host + context.Request.Path, out OutputCacheResponseEntry entry) && entry.IsCached(context, out OutputCacheResponse item))
       {
+        await _next(context); 
         // Execution of the childs ViewComponents
-        item.Body = await _donutCacheHandler.ParseAndExecuteViewComponentsAsync(context, item.Body);
-        await ServeFromCacheAsync(context, item);
+        // item.Body = await _donutCacheHandler.ParseAndExecuteViewComponentsAsync(context, item.Body);
+        // await ServeFromCacheAsync(context, item);
       }
       else
       {

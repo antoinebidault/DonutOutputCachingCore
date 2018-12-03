@@ -9,6 +9,7 @@ namespace DonutOutputCachingCore
   /// </summary>
   public static class OutputCacheFeatureExtensions
   {
+    /*
     /// <summary>
     /// Enabled output caching of the response.
     /// </summary>
@@ -49,7 +50,7 @@ namespace DonutOutputCachingCore
       feature.VaryByHeader = varyByHeaders;
       feature.VaryByParam = varyByParam;
       feature.UseAbsoluteExpiration = useAbsoluteExpiration;
-    }
+    }*/
 
     internal static bool IsOutputCachingEnabled(this HttpContext context, out OutputCacheProfile profile)
     {

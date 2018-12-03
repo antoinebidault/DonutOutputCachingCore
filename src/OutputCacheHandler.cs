@@ -25,90 +25,76 @@ namespace DonutOutputCachingCore
       _options = options;
     }
 
-    public async Task GetOrSetResponse(context)
 
-    public async Task InvokeAsync(HttpContext context)
-    {
-      if (!_options.DoesRequestQualify(context))
-      {
-        await _next(context);
-      }
-      else if (_cache.TryGetValue(context.Request.Host + context.Request.Path, out OutputCacheResponseEntry entry) && entry.IsCached(context, out OutputCacheResponse item))
-      {
-        // Execution of the childs ViewComponents
-        item.Body = await _donutCacheHandler.ParseAndExecuteViewComponentsAsync(context, item.Body);
-        await ServeFromCacheAsync(context, item);
-      }
-      else
-      {
-        await ServeFromMvcAndCacheAsync(context, entry);
-      }
-    }
-
-    private async Task ServeFromMvcAndCacheAsync(HttpContext context, OutputCacheResponseEntry entry)
-    {
-      HttpResponse response = context.Response;
-      Stream originalStream = response.Body;
-
-      try
-      {
-        using (var ms = new MemoryStream())
-        {
-          response.Body = ms;
-
-          await _next(context);
-
-          if (_options.DoesResponseQualify(context))
-          {
-            byte[] bytes = ms.ToArray();
-
-            AddEtagToResponse(context, bytes);
-            AddResponseToCache(context, entry, bytes);
-          }
-          
-          if (ms.Length > 0)
-          {
-            var responseWithoutDonutTags = await _donutCacheHandler.RemoveDonutHtmlTags(ms.ToArray());
-            response.Headers.ContentLength = responseWithoutDonutTags.Length;
-            using (var tempStream = new MemoryStream(responseWithoutDonutTags))
-            {
-              tempStream.Seek(0, SeekOrigin.Begin);
-              tempStream.CopyTo(originalStream);
-            }
-          }
-        }
-      }
-      finally
-      {
-        response.Body = originalStream;
-      }
-    }
-
-    private async Task ServeFromCacheAsync(HttpContext context, OutputCacheResponse value)
+    /// <summary>
+    /// Serve the response from cache
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public async Task<ContentResult> Get(ActionExecutingContext context, OutputCacheResponse value)
     {
 
       // Copy over the HTTP headers
       foreach (string name in value.Headers.Keys)
       {
-        if (!context.Response.Headers.ContainsKey(name))
+        if (!context.HttpContext.Response.Headers.ContainsKey(name))
         {
-          context.Response.Headers[name] = value.Headers[name];
+          context.HttpContext.Response.Headers[name] = value.Headers[name];
         }
       }
 
-      var body = await _donutCacheHandler.RemoveDonutHtmlTags(value.Body);
-      context.Response.ContentLength = body.Length;
-      await context.Response.Body.WriteAsync(body, 0, body.Length);
+      // Execution of the child's viewcomponents
+      var body = await _donutCacheHandler.ParseAndExecuteViewComponentsAsync(context, value.Body);
+      body = await _donutCacheHandler.RemoveDonutHtmlTags(body);
+
+      return new ContentResult
+      {
+        Content = System.Text.Encoding.UTF8.GetString(body)
+      };
     }
 
-    internal void Put(HttpContext httpContext)
+  
+    internal async void Set(HttpContext context, OutputCacheResponseEntry entry) 
     {
-      throw new NotImplementedException();
+      if (_options.DoesResponseQualify(context))
+      {
+        byte[] bytes = ReadFully(context.Response.Body);
+
+        AddEtagToResponse(context, bytes);
+        AddResponseToCache(context, entry, bytes);
+      }
     }
 
-    internal bool IsInCache(ActionExecutingContext context, OutputCacheProfile profile)
+
+    public void GetOrSetProfile(ActionExecutingContext context, string profileKey, OutputCacheProfile newProfile)
     {
-      throw new NotImplementedException();
+      OutputCacheProfile profile = null;
+      if (!string.IsNullOrEmpty(profileKey))
+      {
+        if (_options == null || !_options.Profiles.ContainsKey(profileKey))
+        {
+          throw new ArgumentException($"The Profile '{profileKey}' hasn't been created.");
+        }
+
+        profile = _options.Profiles[profileKey];
+
+      }
+      else
+      {
+        profile = newProfile;
+      }
+
+      context.HttpContext.Features.Set<OutputCacheProfile>(profile);
+    }
+
+    private byte[] ReadFully(Stream input)
+    {
+      using (MemoryStream ms = new MemoryStream())
+      {
+        input.CopyTo(ms);
+        return ms.ToArray();
+      }
     }
 
     private void AddResponseToCache(HttpContext context, OutputCacheResponseEntry entry, byte[] bytes)
@@ -143,6 +129,25 @@ namespace DonutOutputCachingCore
         return;
 
       context.Response.Headers[HeaderNames.ETag] = CalculateChecksum(bytes, context.Request);
+    }
+
+    /// <summary>
+    /// Remove the <donutoutputcaching></donutoutputcaching> tags
+    /// </summary>
+    /// <param name="context"></param>
+    internal async void RemoveDonutOutputCacheTags(HttpContext context)
+    {
+      byte[] bytes = ReadFully(context.Response.Body);
+      if (bytes.Length > 0)
+      {
+        var responseWithoutDonutTags = await _donutCacheHandler.RemoveDonutHtmlTags(bytes);
+        context.Response.Headers.ContentLength = responseWithoutDonutTags.Length;
+        using (var tempStream = new MemoryStream(responseWithoutDonutTags))
+        {
+          tempStream.Seek(0, SeekOrigin.Begin);
+          tempStream.CopyTo(context.Response.Body);
+        }
+      }
     }
 
     private static string CalculateChecksum(byte[] bytes, HttpRequest request)

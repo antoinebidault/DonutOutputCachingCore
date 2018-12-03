@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
@@ -38,16 +39,17 @@ namespace DonutOutputCachingCore.CacheHoleAttribute
 
 
         /// <inheritdoc />
-        public IViewComponentHelper Create(HttpContext context)
+        public IViewComponentHelper Create(ActionExecutingContext context)
         {
-            var modelMetadataProvider = context.RequestServices.GetRequiredService<IModelMetadataProvider>();
-            var tempDataProvider = context.RequestServices.GetRequiredService<ITempDataProvider>();
-            var htmlHelper = context.RequestServices.GetRequiredService<IViewComponentHelper>();
+            var http = context.HttpContext;
+            var modelMetadataProvider = http.RequestServices.GetRequiredService<IModelMetadataProvider>();
+            var tempDataProvider = http.RequestServices.GetRequiredService<ITempDataProvider>();
+            var htmlHelper = http.RequestServices.GetRequiredService<IViewComponentHelper>();
             var viewContext = new ViewContext(
-                new ActionContext(context,new RouteData(), new ControllerActionDescriptor()),
+                new ActionContext(http, context.RouteData, context.ActionDescriptor),
                 new FakeView(),
                 new ViewDataDictionary(modelMetadataProvider, new ModelStateDictionary()),
-                new TempDataDictionary(context, tempDataProvider),
+                new TempDataDictionary(http, tempDataProvider),
                 TextWriter.Null,
                 new HtmlHelperOptions()
             );

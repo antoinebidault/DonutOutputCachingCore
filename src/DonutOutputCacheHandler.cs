@@ -1,6 +1,7 @@
 ﻿using DonutOutputCachingCore.CacheHoleAttribute;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -17,12 +18,17 @@ namespace Microsoft.AspNetCore.Mvc
       _factory = factory;
     }
 
-    internal IViewComponentHelper GetViewComponentHelper(HttpContext context)
+    internal IViewComponentHelper GetViewComponentHelper(ActionExecutingContext context)
     {
       return _factory.Create(context);
     }
 
-    internal async Task<byte[]> RemoveDonutHtmlTags( byte[] htmlBytes)
+    /// <summary>
+    /// Remove the <donutoutputcaching></donutoutputcaching> tags
+    /// </summary>
+    /// <param name="htmlBytes"></param>
+    /// <returns></returns>
+    internal async Task<byte[]> RemoveDonutHtmlTags(byte[] htmlBytes)
     {
       string htmlString = System.Text.Encoding.UTF8.GetString(htmlBytes);
       HtmlDocument htmlDoc = LoadDocument(htmlString);
@@ -48,7 +54,7 @@ namespace Microsoft.AspNetCore.Mvc
     /// <param name="context"></param>
     /// <param name="htmlBytes">The body response bytes</param>
     /// <returns></returns>
-    internal async Task<byte[]> ParseAndExecuteViewComponentsAsync(HttpContext context, byte[] htmlBytes)
+    internal async Task<byte[]> ParseAndExecuteViewComponentsAsync(ActionExecutingContext context, byte[] htmlBytes)
     {
       string htmlString = System.Text.Encoding.UTF8.GetString(htmlBytes);
       HtmlDocument htmlDoc = LoadDocument(htmlString);
