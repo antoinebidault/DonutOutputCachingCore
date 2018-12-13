@@ -58,7 +58,7 @@ namespace DonutOutputCachingCore
 
           await _next(context);
 
-          if (_options.DoesResponseQualify(context))
+          if (context.IsOutputCachingEnabled(out OutputCacheProfile profile) && _options.DoesResponseQualify(context))
           {
             byte[] bytes = ms.ToArray();
 

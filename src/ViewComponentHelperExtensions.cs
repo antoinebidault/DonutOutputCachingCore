@@ -34,7 +34,6 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
                 throw new ArgumentNullException(nameof(helper));
             }
 
-
             if (excludeFromCache)
             {
                 var outputCache = helper.InvokeAsync(name, arguments: arguments, excludeFromCache: false).Result.GetString();

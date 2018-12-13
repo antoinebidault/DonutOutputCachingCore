@@ -87,6 +87,7 @@ namespace Microsoft.AspNetCore.Mvc
     {
       var cacheHandler = GetCacheHandler(context.HttpContext);
 
+
       // Set the current profile
       cacheHandler.GetOrSetProfile(context, Profile, new OutputCacheProfile()
       {
@@ -100,6 +101,7 @@ namespace Microsoft.AspNetCore.Mvc
       var cache = (IOutputCachingService)context.HttpContext.RequestServices.GetService(typeof(IOutputCachingService));
 
       OutputCacheResponseEntry entry;
+
       if (cache.TryGetValue(context.HttpContext.Request.Host + context.HttpContext.Request.Path, out entry) && entry.IsCached(context.HttpContext, out OutputCacheResponse response))
       {
         context.Result = cacheHandler.Get(context, response).Result;
