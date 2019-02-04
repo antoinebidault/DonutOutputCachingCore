@@ -72,7 +72,7 @@ namespace Microsoft.AspNetCore.Mvc
         object argsObject = !string.IsNullOrEmpty(args) ? JsonConvert.DeserializeObject<Dictionary<string,object>>(args) : null;
         Html.IHtmlContent componentHtml = await helper.InvokeAsync(name, argsObject);
 
-        htmlString = htmlString.Replace(node.InnerHtml, componentHtml?.GetString());
+        node.InnerHtml= componentHtml?.GetString();
       }
 
 

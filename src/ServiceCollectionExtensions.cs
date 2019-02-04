@@ -1,7 +1,6 @@
 ﻿using DonutOutputCachingCore;
 using DonutOutputCachingCore.CacheHoleAttribute;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 
