@@ -76,7 +76,7 @@ namespace Microsoft.AspNetCore.Mvc
       }
 
 
-      return await Task.FromResult(StringToByteArray(htmlString));
+      return await Task.FromResult(StringToByteArray(htmlDoc.DocumentNode.OuterHtml));
 
     }
 
