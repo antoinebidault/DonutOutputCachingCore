@@ -1,4 +1,5 @@
 ﻿using Microsoft.Net.Http.Headers;
+using System;
 using System.Collections.Generic;
 
 namespace DonutOutputCachingCore
@@ -6,6 +7,7 @@ namespace DonutOutputCachingCore
   /// <summary>
   /// A cache profile.
   /// </summary>
+  [Serializable]
   public class OutputCacheProfile
   {
 

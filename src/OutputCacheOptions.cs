@@ -16,6 +16,12 @@ namespace DonutOutputCachingCore
         }
 
         /// <summary>
+        /// If set to true, the donutouputcache middleware will use the IDistributedCache interface instead of the standard IMemoryCache
+        /// Make sure to inject the correct distributed cache service before using it.
+        /// </summary>
+        public bool UseDistributedCache { get; set; } = false;
+
+        /// <summary>
         /// Determines if the HTTP request is appropriate for the middleware to engage.
         /// </summary>
         public Func<HttpContext, bool> DoesRequestQualify { get; set; } = DefaultRequestQualifier;

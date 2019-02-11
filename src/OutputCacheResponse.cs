@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 
 namespace DonutOutputCachingCore
@@ -6,6 +7,7 @@ namespace DonutOutputCachingCore
     /// <summary>
     /// A version of the route in memory
     /// </summary>
+    [Serializable]
     public class OutputCacheResponse
     {
         /// <summary>

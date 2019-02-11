@@ -14,8 +14,10 @@ namespace Sample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddDistributedMemoryCache();
             services.AddDonutOutputCaching(options =>
             {
+              options.UseDistributedCache = true;
                 options.Profiles["default"] = new OutputCacheProfile
                 {
                     Duration = 600,

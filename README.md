@@ -87,3 +87,19 @@ public IActionResult Index()
     return View();
 }
 ```
+
+
+## Distributed cache option
+You can use the distributed cache service instead of the standard MemoryCache
+
+```c#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddMvc();
+		services.AddSingleton<IDistributedCache, RedisDistributedCache>();
+    services.AddDonutOutputCaching(options =>
+    {
+        options.UseDistributedCache = true;
+    });
+}
+```

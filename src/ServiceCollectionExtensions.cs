@@ -41,7 +41,13 @@ namespace Microsoft.Extensions.DependencyInjection
       services.AddSingleton<ViewComponentHelperFactory>();
       services.AddTransient<DonutOutputCacheHandler>();
       services.AddTransient<OutputCacheHandler>();
-      services.TryAddSingleton<IOutputCachingService, OutputCachingService>();
+      if (options.UseDistributedCache)
+      {
+        services.TryAddSingleton<IOutputCachingService, DistributedOutputCachingService>();
+      } else
+      {
+        services.TryAddSingleton<IOutputCachingService, OutputCachingService>();
+      }
     }
   }
 }
