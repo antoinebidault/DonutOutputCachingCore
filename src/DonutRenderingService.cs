@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Microsoft.AspNetCore.Mvc
 {
-  internal class DonutOutputCacheHandler
+  internal class DonutRenderingService
   {
     private ViewComponentHelperFactory _factory;
-    public DonutOutputCacheHandler(ViewComponentHelperFactory factory)
+    public DonutRenderingService(ViewComponentHelperFactory factory)
     {
       _factory = factory;
     }

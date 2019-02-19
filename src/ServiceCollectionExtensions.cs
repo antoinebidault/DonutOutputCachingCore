@@ -39,7 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
       services.AddSingleton(options);
       services.AddSingleton<ViewComponentHelperFactory>();
-      services.AddTransient<DonutOutputCacheHandler>();
+      services.AddTransient<DonutRenderingService>();
       services.AddTransient<OutputCacheHandler>();
       if (options.UseDistributedCache)
       {

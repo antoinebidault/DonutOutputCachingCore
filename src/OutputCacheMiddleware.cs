@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DonutOutputCachingCore
@@ -15,10 +11,9 @@ namespace DonutOutputCachingCore
     private readonly RequestDelegate _next;
     private readonly IOutputCachingService _cache;
     private readonly OutputCacheOptions _options;
-    private readonly DonutOutputCacheHandler _donutCacheHandler;
-    private readonly OutputCacheHandler _cacheHandler;
+    private readonly DonutRenderingService _donutCacheHandler;
 
-    public DonutOutputCacheMiddleware(RequestDelegate next, IOutputCachingService cache, OutputCacheOptions options, DonutOutputCacheHandler donutCacheHandler)
+    public DonutOutputCacheMiddleware(RequestDelegate next, IOutputCachingService cache, OutputCacheOptions options, DonutRenderingService donutCacheHandler)
     {
       _next = next;
       _cache = cache;
@@ -32,55 +27,45 @@ namespace DonutOutputCachingCore
       {
         await _next(context);
       }
-      else if (_cache.TryGetValue(context.Request.Host + context.Request.Path, out OutputCacheResponseEntry entry) && entry.IsCached(context, out OutputCacheResponse item))
-      {
-        await _next(context); 
-        // Execution of the childs ViewComponents
-        // item.Body = await _donutCacheHandler.ParseAndExecuteViewComponentsAsync(context, item.Body);
-        // await ServeFromCacheAsync(context, item);
-      }
       else
       {
-        await ServeFromMvcAndCacheAsync(context, entry);
+        await ServeFromMvcAndCacheAsync(context, null);
       }
     }
 
     private async Task ServeFromMvcAndCacheAsync(HttpContext context, OutputCacheResponseEntry entry)
     {
+
+
+      // If cache not set before
+
       HttpResponse response = context.Response;
       Stream originalStream = response.Body;
 
-      try
+      using (var ms = new MemoryStream())
       {
-        using (var ms = new MemoryStream())
+        response.Body = ms;
+        await _next(context);
+        byte[] bytes = ms.ToArray();
+
+        if (!context.Response.Headers.ContainsKey(HeaderNames.ETag) && context.IsOutputCachingEnabled(out OutputCacheProfile profile) && _options.DoesResponseQualify(context))
         {
-          response.Body = ms;
+          context.AddEtagToResponse(bytes);
+          AddResponseToCache(context, entry, bytes);
+        }
 
-          await _next(context);
-
-          if (context.IsOutputCachingEnabled(out OutputCacheProfile profile) && _options.DoesResponseQualify(context))
+        if (ms.Length > 0)
+        {
+          var responseWithoutDonutTags = await _donutCacheHandler.RemoveDonutHtmlTags(bytes);
+          response.Headers.ContentLength = responseWithoutDonutTags.Length;
+          using (var tempStream = new MemoryStream(responseWithoutDonutTags))
           {
-            byte[] bytes = ms.ToArray();
-
-            AddEtagToResponse(context, bytes);
-            AddResponseToCache(context, entry, bytes);
-          }
-          
-          if (ms.Length > 0)
-          {
-            var responseWithoutDonutTags = await _donutCacheHandler.RemoveDonutHtmlTags(ms.ToArray());
-            response.Headers.ContentLength = responseWithoutDonutTags.Length;
-            using (var tempStream = new MemoryStream(responseWithoutDonutTags))
-            {
-              tempStream.Seek(0, SeekOrigin.Begin);
-              tempStream.CopyTo(originalStream);
-            }
+            tempStream.Seek(0, SeekOrigin.Begin);
+            tempStream.CopyTo(originalStream);
           }
         }
-      }
-      finally
-      {
         response.Body = originalStream;
+
       }
     }
 
@@ -119,31 +104,5 @@ namespace DonutOutputCachingCore
       }
     }
 
-    private static void AddEtagToResponse(HttpContext context, byte[] bytes)
-    {
-      if (context.Response.StatusCode != StatusCodes.Status200OK)
-        return;
-
-      if (!context.IsOutputCachingEnabled(out OutputCacheProfile profile))
-      {
-        return;
-      }
-
-      if (context.Response.Headers.ContainsKey(HeaderNames.ETag))
-        return;
-
-      context.Response.Headers[HeaderNames.ETag] = CalculateChecksum(bytes, context.Request);
-    }
-
-    private static string CalculateChecksum(byte[] bytes, HttpRequest request)
-    {
-      byte[] encoding = Encoding.UTF8.GetBytes(request.Headers[HeaderNames.AcceptEncoding].ToString());
-
-      using (var algo = SHA1.Create())
-      {
-        byte[] buffer = algo.ComputeHash(bytes.Concat(encoding).ToArray());
-        return $"\"{WebEncoders.Base64UrlEncode(buffer)}\"";
-      }
-    }
   }
 }

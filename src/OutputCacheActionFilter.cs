@@ -112,7 +112,7 @@ namespace Microsoft.AspNetCore.Mvc
     }
 
 
-    /*
+    
     /// <summary>
     /// Executing the filter
     /// </summary>
@@ -120,14 +120,10 @@ namespace Microsoft.AspNetCore.Mvc
     {
       var cacheHandler = GetCacheHandler(context.HttpContext);
 
-      if (_entry == null) { 
-        cacheHandler.Set(context, _entry);
-      }
-
       // anyway remove the donutoutput cache tags in the response
       cacheHandler.RemoveDonutOutputCacheTags(context.HttpContext);
 
       base.OnActionExecuted(context);
-    }*/
+    }
   }
 }

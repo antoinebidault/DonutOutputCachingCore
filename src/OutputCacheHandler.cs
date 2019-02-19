@@ -16,9 +16,9 @@ namespace DonutOutputCachingCore
   {
     private readonly IOutputCachingService _cache;
     private readonly OutputCacheOptions _options;
-    private readonly DonutOutputCacheHandler _donutCacheHandler;
+    private readonly DonutRenderingService _donutCacheHandler;
 
-    public OutputCacheHandler(IOutputCachingService cache, OutputCacheOptions options, DonutOutputCacheHandler donutCacheHandler)
+    public OutputCacheHandler(IOutputCachingService cache, OutputCacheOptions options, DonutRenderingService donutCacheHandler)
     {
       _cache = cache;
       _donutCacheHandler = donutCacheHandler;
@@ -55,13 +55,13 @@ namespace DonutOutputCachingCore
     }
 
   
-    internal async void Set(HttpContext context, OutputCacheResponseEntry entry) 
+    internal void Set(HttpContext context, OutputCacheResponseEntry entry) 
     {
       if (_options.DoesResponseQualify(context))
       {
         byte[] bytes = ReadFully(context.Response.Body);
 
-        AddEtagToResponse(context, bytes);
+        context.AddEtagToResponse(bytes);
         AddResponseToCache(context, entry, bytes);
       }
     }
@@ -90,6 +90,7 @@ namespace DonutOutputCachingCore
 
     private byte[] ReadFully(Stream input)
     {
+      input.Seek(0, SeekOrigin.Begin);
       using (MemoryStream ms = new MemoryStream())
       {
         input.CopyTo(ms);
@@ -115,22 +116,6 @@ namespace DonutOutputCachingCore
       }
     }
 
-    private static void AddEtagToResponse(HttpContext context, byte[] bytes)
-    {
-      if (context.Response.StatusCode != StatusCodes.Status200OK)
-        return;
-
-      if (!context.IsOutputCachingEnabled(out OutputCacheProfile profile))
-      {
-        return;
-      }
-
-      if (context.Response.Headers.ContainsKey(HeaderNames.ETag))
-        return;
-
-      context.Response.Headers[HeaderNames.ETag] = CalculateChecksum(bytes, context.Request);
-    }
-
     /// <summary>
     /// Remove the <donutoutputcaching></donutoutputcaching> tags
     /// </summary>
@@ -150,15 +135,5 @@ namespace DonutOutputCachingCore
       }
     }
 
-    private static string CalculateChecksum(byte[] bytes, HttpRequest request)
-    {
-      byte[] encoding = Encoding.UTF8.GetBytes(request.Headers[HeaderNames.AcceptEncoding].ToString());
-
-      using (var algo = SHA1.Create())
-      {
-        byte[] buffer = algo.ComputeHash(bytes.Concat(encoding).ToArray());
-        return $"\"{WebEncoders.Base64UrlEncode(buffer)}\"";
-      }
-    }
   }
 }

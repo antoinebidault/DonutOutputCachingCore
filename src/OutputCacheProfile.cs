@@ -10,7 +10,6 @@ namespace DonutOutputCachingCore
   [Serializable]
   public class OutputCacheProfile
   {
-
     /// <summary>
     /// The duration in seconds of how long to cache the response.
     /// </summary>
