@@ -33,7 +33,7 @@ namespace DonutOutputCachingCore
     /// <summary>
     /// Use absolute expiration instead of the default sliding expiration.
     /// </summary>
-    public bool UseAbsoluteExpiration { get; set; }
+    public bool UseAbsoluteExpiration { get; set; } 
 
   }
 }

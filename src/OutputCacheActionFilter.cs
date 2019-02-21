@@ -49,8 +49,9 @@ namespace Microsoft.AspNetCore.Mvc
 
     /// <summary>
     /// Use absolute expiration instead of the default sliding expiration.
+    /// By default to true
     /// </summary>
-    public bool UseAbsoluteExpiration { get; set; }
+    public bool UseAbsoluteExpiration { get; set; } = true;
 
     /// <summary>
     /// Return the cache handler value
