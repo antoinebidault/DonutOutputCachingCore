@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -35,74 +36,74 @@ namespace DonutOutputCachingCore
 
     private async Task ServeFromMvcAndCacheAsync(HttpContext context, OutputCacheResponseEntry entry)
     {
-
-
-      // If cache not set before
-
       HttpResponse response = context.Response;
       Stream originalStream = response.Body;
-
-      using (var ms = new MemoryStream())
+      try
       {
-        response.Body = ms;
-        await _next(context);
-        byte[] bytes = ms.ToArray();
-
-        if (!context.Response.Headers.ContainsKey(HeaderNames.ETag) && context.IsOutputCachingEnabled(out OutputCacheProfile profile) && _options.DoesResponseQualify(context))
+        using (var ms = new MemoryStream())
         {
-          context.AddEtagToResponse(bytes);
-          AddResponseToCache(context, entry, bytes);
-        }
+          response.Body = ms;
+          await _next(context);
+          byte[] bytes = ms.ToArray();
 
-        if (ms.Length > 0)
-        {
-          var responseWithoutDonutTags = await _donutCacheHandler.RemoveDonutHtmlTags(bytes);
-          response.Headers.ContentLength = responseWithoutDonutTags.Length;
-          using (var tempStream = new MemoryStream(responseWithoutDonutTags))
+          if (!context.Response.Headers.ContainsKey(HeaderNames.ETag) && context.IsOutputCachingEnabled(out OutputCacheProfile profile) && _options.DoesResponseQualify(context))
           {
-            tempStream.Seek(0, SeekOrigin.Begin);
-            tempStream.CopyTo(originalStream);
+            context.AddEtagToResponse(bytes);
+            AddResponseToCache(context, entry, bytes);
+          }
+
+          if (ms.Length > 0)
+          {
+            var responseWithoutDonutTags = await _donutCacheHandler.RemoveDonutHtmlTags(bytes);
+            response.Headers.ContentLength = responseWithoutDonutTags.Length;
+            using (var tempStream = new MemoryStream(responseWithoutDonutTags))
+            {
+              tempStream.Seek(0, SeekOrigin.Begin);
+              tempStream.CopyTo(originalStream);
+            }
           }
         }
+      }
+      finally
+      {
         response.Body = originalStream;
-
       }
     }
 
-    private async Task ServeFromCacheAsync(HttpContext context, OutputCacheResponse value)
+  private async Task ServeFromCacheAsync(HttpContext context, OutputCacheResponse value)
+  {
+
+    // Copy over the HTTP headers
+    foreach (string name in value.Headers.Keys)
     {
-
-      // Copy over the HTTP headers
-      foreach (string name in value.Headers.Keys)
+      if (!context.Response.Headers.ContainsKey(name))
       {
-        if (!context.Response.Headers.ContainsKey(name))
-        {
-          context.Response.Headers[name] = value.Headers[name];
-        }
-      }
-
-      var body = await _donutCacheHandler.RemoveDonutHtmlTags(value.Body);
-      context.Response.ContentLength = body.Length;
-      await context.Response.Body.WriteAsync(body, 0, body.Length);
-    }
-
-    private void AddResponseToCache(HttpContext context, OutputCacheResponseEntry entry, byte[] bytes)
-    {
-      if (!context.IsOutputCachingEnabled(out OutputCacheProfile profile))
-      {
-        return;
-      }
-
-      if (entry == null)
-      {
-        entry = new OutputCacheResponseEntry(context, bytes, profile);
-        _cache.Set(context.Request.Host + context.Request.Path, entry, context);
-      }
-      else
-      {
-        entry.AddResponse(context, new OutputCacheResponse(bytes, context.Response.Headers));
+        context.Response.Headers[name] = value.Headers[name];
       }
     }
 
+    var body = await _donutCacheHandler.RemoveDonutHtmlTags(value.Body);
+    context.Response.ContentLength = body.Length;
+    await context.Response.Body.WriteAsync(body, 0, body.Length);
   }
+
+  private void AddResponseToCache(HttpContext context, OutputCacheResponseEntry entry, byte[] bytes)
+  {
+    if (!context.IsOutputCachingEnabled(out OutputCacheProfile profile))
+    {
+      return;
+    }
+
+    if (entry == null)
+    {
+      entry = new OutputCacheResponseEntry(context, bytes, profile);
+      _cache.Set(context.Request.Host + context.Request.Path, entry, context);
+    }
+    else
+    {
+      entry.AddResponse(context, new OutputCacheResponse(bytes, context.Response.Headers));
+    }
+  }
+
+}
 }
