@@ -9,5 +9,5 @@ build_script:
 test: off
 
 artifacts:
-  - path: DonutOutputCachingCore\**\bin\release\*.nupkg
+  - path: src\bin\release\*.nupkg
     name: NuGet package
