@@ -59,7 +59,7 @@ namespace DonutOutputCachingCore
             using (var tempStream = new MemoryStream(responseWithoutDonutTags))
             {
               tempStream.Seek(0, SeekOrigin.Begin);
-              tempStream.CopyTo(originalStream);
+              await tempStream.CopyToAsync(originalStream);
             }
           }
         }
